@@ -1,0 +1,4 @@
+bedrock_agentcore==1.1.1
+langgraph-checkpoint-aws==1.0.1
+langchain==1.1.1
+langchain-aws==1.1.0

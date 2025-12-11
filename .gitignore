@@ -1,0 +1,54 @@
+# ====================
+# Python
+# ====================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# Virtual environments
+venv/
+.env/
+.envrc
+.venv/
+env/
+ENV/
+
+# ====================
+# AWS CDK
+# ====================
+cdk.out/
+*.template.json
+*.tsbuildinfo
+*.jsii
+*.pyc
+cdk.context.json
+
+# ====================
+# IDE / Editor
+# ====================
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Mac / Linux / Windows
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ====================
+# Optional / Misc
+# ====================
+pip-wheel-metadata/
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
