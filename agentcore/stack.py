@@ -1,10 +1,11 @@
+from pathlib import Path
+
 from aws_cdk import Stack, CfnOutput
 from aws_cdk.aws_bedrock_agentcore_alpha import Memory, Runtime, AgentRuntimeArtifact, \
     RequestHeaderConfiguration
 from aws_cdk.aws_ecr_assets import DockerImageAsset, Platform
 from aws_cdk.aws_iam import PolicyStatement
 from constructs import Construct
-
 
 FOUNDATIONAL_MODEL = "amazon.nova-2-lite-v1:0"
 INFERENCE_PROFILE = f"global.{FOUNDATIONAL_MODEL}"
@@ -44,10 +45,11 @@ class AgentcoreStack(Stack):
         )
 
         # build agent image
-        ecr_image = DockerImageAsset(
+        agent_assets = Path(__file__).parents[1].joinpath("assets")
+        agent_image = DockerImageAsset(
             scope=self,
             id="Agent",
-            directory="assets",
+            directory=str(agent_assets),
             platform=Platform.LINUX_ARM64
         )
 
@@ -55,10 +57,10 @@ class AgentcoreStack(Stack):
         runtime = Runtime(
             scope=self,
             id="Runtime",
-            runtime_name="CoreAgent",
+            runtime_name="Agent",
             agent_runtime_artifact=AgentRuntimeArtifact.from_ecr_repository(
-                repository=ecr_image.repository,
-                tag=ecr_image.image_tag
+                repository=agent_image.repository,
+                tag=agent_image.image_tag
             ),
             request_header_configuration=RequestHeaderConfiguration(
                 allowlisted_headers=[
