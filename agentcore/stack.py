@@ -1,8 +1,7 @@
 from pathlib import Path
 
 from aws_cdk import Stack, CfnOutput
-from aws_cdk.aws_bedrock_agentcore_alpha import Memory, Runtime, AgentRuntimeArtifact, \
-    RequestHeaderConfiguration
+from aws_cdk.aws_bedrock_agentcore_alpha import Memory, Runtime, AgentRuntimeArtifact
 from aws_cdk.aws_ecr_assets import DockerImageAsset, Platform
 from aws_cdk.aws_iam import PolicyStatement
 from constructs import Construct
@@ -12,7 +11,7 @@ INFERENCE_PROFILE = f"global.{FOUNDATIONAL_MODEL}"
 
 class AgentcoreStack(Stack):
     """
-    DK stack that deploys a Bedrock AgentCore runtime, its backing memory store,
+    CDK stack that deploys a Bedrock AgentCore runtime, its backing memory store,
     and a custom agent image hosted in Amazon ECR.
 
     This stack performs the following:
@@ -61,12 +60,6 @@ class AgentcoreStack(Stack):
             agent_runtime_artifact=AgentRuntimeArtifact.from_ecr_repository(
                 repository=agent_image.repository,
                 tag=agent_image.image_tag
-            ),
-            request_header_configuration=RequestHeaderConfiguration(
-                allowlisted_headers=[
-                    "X-Amzn-Bedrock-AgentCore-Runtime-Custom-User",
-                    "X-Amzn-Bedrock-AgentCore-Runtime-Custom-Session"
-                ]
             ),
             environment_variables={
                 'MEMORY_ID': memory.memory_id,

@@ -1,7 +1,7 @@
 # 🚀 Bedrock AgentCore Minimal Agent
 
 This repository provides a **minimal reference implementation** of an **Amazon Bedrock AgentCore**–based agent, packaged as a Docker container and deployed using **AWS CDK**.  
-It demonstrates how to run a fully custom agent runtime while leveraging Bedrock’s managed memory store, model invocation, and runtime orchestration.
+It demonstrates how to run a fully custom agent runtime while leveraging Bedrock’s managed memory store, model invocation, and an integrated web search capability.
 
 ---
 
@@ -47,14 +47,15 @@ Below is a high-level ASCII architecture diagram describing how all components i
 
 ### Core Components
 
-| Component | Description |
-|----------|-------------|
-| **Bedrock Agent Runtime** | Managed service that hosts and executes your custom agent image. |
-| **Custom Agent Container** | Python application that implements the AgentCore runtime server using `bedrock_agentcore`. |
-| **Memory Store** | Persistent long-term and short-term conversation memory via `AgentCoreMemoryStore` and `AgentCoreMemorySaver`. |
-| **Foundation Model** | Amazon **Nova 2 Lite**, accessed via `bedrock_converse`. |
-| **Agent Logic** | LangChain agent created with `create_agent()`, supporting memory-backed reasoning. |
-| **AWS CDK** | Provisions memory, builds and pushes the Docker image, deploys the Agent Runtime, configures model access. |
+| Component                          | Description                                                                           |
+| ---------------------------------- | ------------------------------------------------------------------------------------- |
+| **Bedrock Agent Runtime**          | Fully managed service that executes your custom agent container.                      |
+| **Custom Agent Runtime Container** | Python application using LangChain + Bedrock AgentCore server.                        |
+| **Memory Store**                   | Persistent memory (short-term + long-term) backed by Bedrock Memory.                  |
+| **Nova Model**                     | Amazon Nova model invoked via Bedrock Converse (`model_provider='bedrock_converse'`). |
+| **LangChain Agent**                | Orchestrates reasoning, memory usage, and tool calls.                                 |
+| **Search Tool**                    | DuckDuckGo-based web search for current event reasoning.                              |
+| **AWS CDK Stack**                  | Builds Docker image, deploys Agent Runtime, configures IAM + Memory.                  |
 
 ---
 
@@ -63,12 +64,12 @@ Below is a high-level ASCII architecture diagram describing how all components i
 ### Short-Term Memory
 - Scoped to a single conversation thread  
 - Used for conversational continuity  
-- Implemented using **AgentCoreMemorySaver**
+- Implemented using **langgraph_checkpoint_aws.AgentCoreMemorySaver**
 
 ### Long-Term Memory
 - Persists across all conversations  
 - Used for storing facts or knowledge learned over time  
-- Implemented using **AgentCoreMemoryStore**
+- Implemented using **langgraph_checkpoint_aws.AgentCoreMemoryStore**
 
 Both memory layers use the same Bedrock Memory resource created by the CDK stack.
 
@@ -83,18 +84,21 @@ Both memory layers use the same Bedrock Memory resource created by the CDK stack
 - **AWS CDK (Python)** – infrastructure definition and automated deployment  
 
 ### Python Libraries
+- `bedrock-converse` – Bedrock model wrapper for LangChain
 - `bedrock-agentcore` – server runtime for AgentCore  
 - `langchain` – agent orchestration and message handling  
-- `langgraph-checkpoint-aws` – memory persistence via Bedrock Memory  
-- `bedrock-converse` – Bedrock model wrapper for LangChain  
+- `langchain-aws` - interface for Bedrock Converse models  
+- `langchain-community` - community managed Tools, including DuckDuckGo search
+- `langgraph-checkpoint-aws` – integrates memory with Bedrock AgentCore
 
 ---
 
 ## 🧩 Capabilities
 
+- Docker-based deployment with **AWS-managed execution**
 - Conversational reasoning powered by **Nova 2 Lite**  
 - Integrated **short- and long-term memory** for context persistence  
-- **Session and user identity propagation** via request headers  
+- DuckDuckGo search for **current-event reasoning**
 - Fully customizable logic using LangChain tools or workflows  
 - Modular design suited for extension (RAG, APIs, LangGraph workflows, etc.)
 
@@ -118,26 +122,21 @@ The AWS CDK stack:
 
 Use the **Runtime ARN** emitted by CDK to invoke the agent.
 
-### Supported Headers
-
-| Header | Description |
-|--------|-------------|
-| `X-Amzn-Bedrock-AgentCore-Runtime-Custom-User` | Identifies the caller |
-| `X-Amzn-Bedrock-AgentCore-Runtime-Custom-Session` | Specifies the session/thread ID |
-
 ### Example Payload
 
 ```json
 {
-  "prompt": "Hello, who are you?"
+  "input": "What's the weather like in Tokyo today?",
+  "user_id": "12345",
+  "session_id": "3456789"
 }
 ```
 
 ## Summary
 This project illustrates how to:
 
-- Deploy a custom containerized Bedrock AgentCore application
-- Integrate Nova 2 Lite with LangChain
-- Persist memory using Bedrock’s built-in infrastructure
-- Build cloud-ready agents with minimal infrastructure overhead
-- It serves as a clean foundation for production AI agents on Amazon Bedrock, ready for extension with tools, workflows, and domain-specific logic.
+- Running a custom containerized Bedrock Agent
+- Integrating Nova models with LangChain
+- Persisting memory with Bedrock AgentCore Memory
+- Extending agents with real-world tools and logic
+- Deploying production-ready agent runtimes using AWS CDK
