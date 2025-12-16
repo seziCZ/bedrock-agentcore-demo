@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import aws_cdk as cdk
 
-from agentcore.stack import AgentcoreStack
+from agentcore.stack import AgentCoreStack
 
 
 app = cdk.App()
@@ -13,6 +13,6 @@ app = cdk.App()
 # )
 # AgentcoreStack(app, "AgentcorePocStack", env=env)
 
-AgentcoreStack(app, "AgentcoreStack")
+AgentCoreStack(app, "AgentcoreStack")
 
 app.synth()

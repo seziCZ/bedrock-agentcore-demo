@@ -28,20 +28,22 @@ Below is a high-level ASCII architecture diagram describing how all components i
              │ - Reads/Writes Memory     │
              │ - Invokes Bedrock Model   │
              │ - Uses user/session ctx   │
-             └───────────┬──────────────┘
-                         │
-                         ▼
+             └───────┬─────────┬────────┘
+                     │         │
+                     │         │ Invoke Model
+                     │         ▼
+                     │   ┌───────────────────────────┐
+                     │   │ Bedrock Foundation Model  │
+                     │   │        (Nova 2 Lite)       │
+                     │   └───────────────────────────┘
+                     │
+                     │ Read/Write Memory
+                     ▼
          ┌────────────────────────────────┐
-         │       Bedrock Memory Store      │
+         │        Bedrock Memory Store     │
          │  (short-term + long-term state) │
          └────────────────────────────────┘
 
-                         │
-                         ▼
-            ┌───────────────────────────┐
-            │ Bedrock Foundation Model  │
-            │     (Nova 2 Lite)         │
-            └───────────────────────────┘
 
 ---
 
@@ -79,7 +81,7 @@ Both memory layers use the same Bedrock Memory resource created by the CDK stack
 
 ### AWS Services
 - **Amazon Bedrock AgentCore** – runtime orchestration and memory integration  
-- **Amazon Bedrock Converse** – LLM interface for Nova 2 Lite  
+- **Amazon Bedrock Converse** – LLM interface for Amazon Nova 2 Lite model  
 - **Amazon ECR** – stores the built agent Docker image  
 - **AWS CDK (Python)** – infrastructure definition and automated deployment  
 
@@ -96,7 +98,7 @@ Both memory layers use the same Bedrock Memory resource created by the CDK stack
 ## 🧩 Capabilities
 
 - Docker-based deployment with **AWS-managed execution**
-- Conversational reasoning powered by **Nova 2 Lite**  
+- Conversational reasoning powered by **Amazon Nova 2 Lite**  
 - Integrated **short- and long-term memory** for context persistence  
 - DuckDuckGo search for **current-event reasoning**
 - Fully customizable logic using LangChain tools or workflows  
@@ -136,7 +138,7 @@ Use the **Runtime ARN** emitted by CDK to invoke the agent.
 This project illustrates how to:
 
 - Running a custom containerized Bedrock Agent
-- Integrating Nova models with LangChain
+- Integrating Amazon Nova models with LangChain
 - Persisting memory with Bedrock AgentCore Memory
 - Extending agents with real-world tools and logic
 - Deploying production-ready agent runtimes using AWS CDK

@@ -9,7 +9,7 @@ from constructs import Construct
 FOUNDATIONAL_MODEL = "amazon.nova-2-lite-v1:0"
 INFERENCE_PROFILE = f"global.{FOUNDATIONAL_MODEL}"
 
-class AgentcoreStack(Stack):
+class AgentCoreStack(Stack):
     """
     CDK stack that deploys a Bedrock AgentCore runtime, its backing memory store,
     and a custom agent image hosted in Amazon ECR.

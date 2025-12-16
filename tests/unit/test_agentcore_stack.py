@@ -3,7 +3,7 @@ import aws_cdk.assertions as assertions
 import pytest
 from aws_cdk.assertions import Template
 
-from agentcore.stack import AgentcoreStack
+from agentcore.stack import AgentCoreStack
 
 
 @pytest.fixture
@@ -13,7 +13,7 @@ def template() -> Template:
     into a CloudFormation template for assertions.
     """
     app = core.App()
-    stack = AgentcoreStack(app, "agentcore")
+    stack = AgentCoreStack(app, "agentcore")
     return assertions.Template.from_stack(stack)
 
 
@@ -41,6 +41,8 @@ def test_runtime(template: Template) -> None:
         props={
             "AgentRuntimeName": "Agent",
             "ProtocolConfiguration": "HTTP",
-            "NetworkConfiguration": {"NetworkMode": "PUBLIC"},
+            "NetworkConfiguration": {
+                "NetworkMode": "PUBLIC"
+            },
         },
     )
